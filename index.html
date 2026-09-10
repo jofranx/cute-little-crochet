@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cute Little Crochet | Handmade with Love in India</title>
+  <meta name="description" content="Handmade crochet creations, adorable amigurumi plushies, aesthetic tote bags, scrunchies, and cozy wearables. Pan-India shipping with direct WhatsApp and UPI ordering.">
+  <meta name="theme-color" content="#FAF7F2">
+
+  <!-- Fonts: Google Inter & Playfair Display / Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Supabase JS Client & Store Config -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              cream: '#FAF7F2',
+              warm: '#F4ECE1',
+              rose: '#D47A65',
+              'rose-dark': '#B85E49',
+              sage: '#7A9A7B',
+              'sage-light': '#EBF2EA',
+              dark: '#2D231E',
+              muted: '#716259',
+              border: '#E8DFD5'
+            }
+          },
+          fontFamily: {
+            sans: ['Outfit', 'sans-serif'],
+            serif: ['Playfair Display', 'serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom subtle touches */
+    body {
+      background-color: #FAF7F2;
+      color: #2D231E;
+      font-family: 'Outfit', sans-serif;
+    }
+    
+    ::selection {
+      background-color: #F0D3C9;
+      color: #B85E49;
+    }
+
+    /* Modal animation */
+    dialog[open] {
+      animation: dialogFadeIn 0.2s ease-out;
+    }
+    @keyframes dialogFadeIn {
+      from { opacity: 0; transform: scale(0.96) translateY(8px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    dialog::backdrop {
+      background: rgba(45, 35, 30, 0.45);
+      backdrop-filter: blur(4px);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased">
+
+  <!-- 1. Announcement Banner -->
+  <aside id="announcement-banner" class="bg-brand-rose text-white text-xs sm:text-sm font-medium py-2 px-4 text-center tracking-wide flex items-center justify-center gap-2">
+    <span>🧶</span>
+    <span id="announcement-text">Handmade with 100% love in India 🇮🇳 • Free shipping on orders above ₹1,200!</span>
+  </aside>
+
+  <!-- 2. Main Navigation Bar -->
+  <header class="sticky top-0 z-40 bg-brand-cream/90 backdrop-blur-md border-b border-brand-border/60 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 sm:h-20 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <a href="#" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-brand-warm flex items-center justify-center text-xl shadow-inner border border-brand-border/60 group-hover:scale-105 transition-transform">
+          🌸
+        </div>
+        <div>
+          <h1 class="font-serif text-xl sm:text-2xl font-bold tracking-tight text-brand-dark group-hover:text-brand-rose transition-colors">Cute Little Crochet</h1>
+          <p class="text-[11px] uppercase tracking-widest text-brand-muted font-medium">Handmade Boutique</p>
+        </div>
+      </a>
+
+      <!-- Search & Cart Actions -->
+      <div class="flex items-center gap-3 sm:gap-4">
+        <!-- Quick Search Bar (Desktop) -->
+        <div class="relative hidden md:block w-64">
+          <input 
+            type="text" 
+            id="search-input" 
+            placeholder="Search creations..." 
+            class="w-full bg-white/80 border border-brand-border rounded-full pl-9 pr-4 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-rose/40 focus:border-brand-rose placeholder:text-brand-muted/70 transition-all"
+          >
+          <i data-lucide="search" class="w-4 h-4 text-brand-muted absolute left-3 top-2.5 pointer-events-none"></i>
+        </div>
+
+        <!-- How It Works / UPI Info Button -->
+        <button 
+          id="btn-open-guide" 
+          class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-brand-muted hover:text-brand-dark hover:bg-brand-warm/60 transition-colors border border-transparent hover:border-brand-border"
+          title="How WhatsApp & UPI Ordering Works"
+        >
+          <i data-lucide="help-circle" class="w-4 h-4 text-brand-sage"></i>
+          <span>How to Order</span>
+        </button>
+
+        <!-- Cart Button -->
+        <button 
+          id="btn-open-cart" 
+          class="relative inline-flex items-center gap-2 bg-white hover:bg-brand-warm text-brand-dark px-3.5 sm:px-4 py-2 rounded-full border border-brand-border shadow-xs hover:shadow transition-all group"
+          aria-label="View shopping bag"
+        >
+          <i data-lucide="shopping-bag" class="w-4 h-4 text-brand-rose group-hover:scale-110 transition-transform"></i>
+          <span class="text-xs sm:text-sm font-semibold hidden xs:inline">Bag</span>
+          <span id="cart-badge" class="bg-brand-rose text-white text-[11px] font-bold px-2 py-0.5 rounded-full">0</span>
+        </button>
+
+        <!-- Admin Portal Trigger Button -->
+        <button 
+          id="btn-open-admin" 
+          class="p-2 rounded-full text-brand-muted hover:text-brand-dark hover:bg-brand-warm/80 transition-colors" 
+          title="Owner Admin Panel"
+        >
+          <i data-lucide="shield-check" class="w-5 h-5"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Search input bar -->
+    <div class="md:hidden px-4 pb-3">
+      <div class="relative w-full">
+        <input 
+          type="text" 
+          id="search-input-mobile" 
+          placeholder="Search bag, plushie, coaster..." 
+          class="w-full bg-white border border-brand-border rounded-full pl-9 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-rose/40 placeholder:text-brand-muted/70"
+        >
+        <i data-lucide="search" class="w-4 h-4 text-brand-muted absolute left-3 top-3 pointer-events-none"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- 3. Hero Section -->
+  <section class="relative overflow-hidden pt-8 pb-12 sm:pt-14 sm:pb-20">
+    <!-- Decorative background blobs -->
+    <div class="absolute -top-20 -left-20 w-80 h-80 bg-brand-warm/60 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute top-1/2 -right-20 w-80 h-80 bg-brand-sage-light/60 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+        
+        <!-- Left Hero Content -->
+        <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-sage-light text-brand-sage border border-brand-sage/20 text-xs sm:text-sm font-medium">
+            <span class="w-2 h-2 rounded-full bg-brand-sage animate-pulse"></span>
+            Accepting New Custom & Ready Orders
+          </div>
+
+          <h2 class="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold text-brand-dark tracking-tight leading-tight">
+            Soft, cuddly & made with every single stitch.
+          </h2>
+
+          <p class="text-base sm:text-lg text-brand-muted max-w-xl mx-auto lg:mx-0 leading-relaxed font-normal">
+            Welcome to <strong class="text-brand-dark font-medium">Cute Little Crochet</strong>! From cute plushie companions to aesthetic daisy tote bags, every piece is handcrafted in India using ultra-soft, durable milk-cotton yarn.
+          </p>
+
+          <!-- Highlights Chips -->
+          <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4 text-xs sm:text-sm text-brand-muted font-medium pt-2">
+            <span class="flex items-center gap-1.5"><i data-lucide="sparkles" class="w-4 h-4 text-brand-rose"></i> 100% Handcrafted</span>
+            <span class="flex items-center gap-1.5"><i data-lucide="truck" class="w-4 h-4 text-brand-sage"></i> Pan-India Delivery</span>
+            <span class="flex items-center gap-1.5"><i data-lucide="message-circle" class="w-4 h-4 text-emerald-600"></i> Direct WhatsApp & UPI</span>
+          </div>
+
+          <div class="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3">
+            <a href="#catalog" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-brand-rose hover:bg-brand-rose-dark text-white px-7 py-3 rounded-full font-medium shadow-sm hover:shadow-md transition-all">
+              <span>Explore Creations</span>
+              <i data-lucide="arrow-down" class="w-4 h-4"></i>
+            </a>
+            <button id="btn-hero-custom" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white hover:bg-brand-warm text-brand-dark border border-brand-border px-6 py-3 rounded-full font-medium transition-all">
+              <i data-lucide="message-square" class="w-4 h-4 text-brand-rose"></i>
+              <span>Request Custom Order</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Hero Visual Grid -->
+        <div class="lg:col-span-5 relative">
+          <div class="relative mx-auto max-w-md lg:max-w-none">
+            <div class="rounded-3xl overflow-hidden shadow-xl border-4 border-white aspect-4/3 sm:aspect-square bg-brand-warm relative group">
+              <img 
+                src="https://images.unsplash.com/photo-1615486511484-92e172cc4fe0?q=80&w=1000&auto=format&fit=crop" 
+                alt="Cute handmade crochet creations" 
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                fetchpriority="high"
+              >
+              <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex flex-col justify-end p-6 text-white">
+                <span class="text-xs uppercase tracking-widest text-amber-200 font-semibold">Featured Creation</span>
+                <p class="font-serif text-lg font-bold">Daisy Meadow Slouchy Bag</p>
+                <p class="text-xs text-stone-200 mt-0.5">Hand-stitched granny square pattern</p>
+              </div>
+            </div>
+
+            <!-- Floating badge -->
+            <div class="absolute -bottom-4 -left-4 bg-white/95 backdrop-blur-sm px-4 py-3 rounded-2xl shadow-lg border border-brand-border flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700">
+                <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <p class="text-xs font-bold text-brand-dark">Easy UPI Checkout</p>
+                <p class="text-[11px] text-brand-muted">GPay • PhonePe • Paytm</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Categories & Product Catalog Section -->
+  <main id="catalog" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-grow">
+    
+    <!-- Section Heading & Filter Bar -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-brand-border/60">
+      <div>
+        <p class="text-xs uppercase tracking-widest text-brand-rose font-bold mb-1">Our Collection</p>
+        <h3 class="font-serif text-2xl sm:text-3xl font-bold text-brand-dark">Browse Handcrafted Pieces</h3>
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="flex flex-wrap gap-2" id="category-pills">
+        <button data-cat="all" class="cat-pill active px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all bg-brand-dark text-white shadow-xs">
+          All Pieces
+        </button>
+        <button data-cat="plushies" class="cat-pill px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all bg-white text-brand-muted border border-brand-border hover:bg-brand-warm">
+          🧸 Plushies & Amigurumi
+        </button>
+        <button data-cat="bags" class="cat-pill px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all bg-white text-brand-muted border border-brand-border hover:bg-brand-warm">
+          👜 Bags & Totes
+        </button>
+        <button data-cat="wearables" class="cat-pill px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all bg-white text-brand-muted border border-brand-border hover:bg-brand-warm">
+          🧶 Wearables & Hats
+        </button>
+        <button data-cat="accessories" class="cat-pill px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all bg-white text-brand-muted border border-brand-border hover:bg-brand-warm">
+          🌸 Hair Accessories
+        </button>
+        <button data-cat="home" class="cat-pill px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all bg-white text-brand-muted border border-brand-border hover:bg-brand-warm">
+          ☕ Home & Coasters
+        </button>
+      </div>
+    </div>
+
+    <!-- Active Filters & Count indicator -->
+    <div class="flex items-center justify-between py-4 text-xs text-brand-muted">
+      <div id="catalog-count-text">Showing 8 creations</div>
+      <div class="flex items-center gap-2">
+        <span>Sort by:</span>
+        <select id="sort-select" class="bg-white border border-brand-border rounded-lg px-2.5 py-1 text-xs text-brand-dark focus:outline-none focus:ring-1 focus:ring-brand-rose">
+          <option value="featured">Featured</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+          <option value="name">Name (A-Z)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Product Grid -->
+    <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-7 pt-2">
+      <!-- Injected via JavaScript -->
+    </div>
+
+    <!-- Empty State (if search or filter yields nothing) -->
+    <div id="empty-state" class="hidden text-center py-16">
+      <div class="w-16 h-16 rounded-full bg-brand-warm mx-auto flex items-center justify-center text-3xl mb-4">🔍</div>
+      <h4 class="font-serif text-xl font-bold text-brand-dark">No crochet creations found</h4>
+      <p class="text-sm text-brand-muted mt-1 max-w-sm mx-auto">Try clearing your search query or selecting a different category filter.</p>
+      <button id="btn-reset-filters" class="mt-4 px-5 py-2 rounded-full bg-brand-warm text-brand-dark text-xs font-semibold hover:bg-brand-border transition-colors">
+        Reset All Filters
+      </button>
+    </div>
+
+    <!-- Custom Order Prompt Banner -->
+    <section class="mt-16 bg-gradient-to-r from-brand-warm via-white to-brand-sage-light/40 border border-brand-border rounded-3xl p-6 sm:p-10 shadow-xs">
+      <div class="max-w-3xl">
+        <span class="inline-block px-3 py-1 rounded-full bg-brand-rose/10 text-brand-rose text-xs font-bold uppercase tracking-wider mb-3">Custom Commissions</span>
+        <h3 class="font-serif text-2xl sm:text-3xl font-bold text-brand-dark mb-3">Have a specific design, color palette, or size in mind?</h3>
+        <p class="text-sm sm:text-base text-brand-muted leading-relaxed mb-6">
+          We love crafting personalized pieces! Whether it's a bouquet of crochet flowers, a personalized plushie for a birthday, or a cardigan in your dream colors, send us a reference photo on WhatsApp.
+        </p>
+        <button id="btn-custom-commission" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-full text-sm font-medium shadow-sm hover:shadow transition-all">
+          <i data-lucide="message-circle" class="w-4 h-4"></i>
+          <span>Chat on WhatsApp for Custom Orders</span>
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 5. How It Works / Steps Section -->
+  <section class="bg-brand-warm/50 border-t border-brand-border/60 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-12">
+        <p class="text-xs uppercase tracking-widest text-brand-rose font-bold mb-2">Simple & Trustworthy</p>
+        <h3 class="font-serif text-2xl sm:text-3xl font-bold text-brand-dark">How Ordering Works (No Gateway Hassle)</h3>
+        <p class="text-sm text-brand-muted mt-2">Enjoy direct, friendly communication with the artisan without high gateway fees or complicated signups.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Step 1 -->
+        <div class="bg-white p-7 rounded-3xl border border-brand-border/70 shadow-xs relative">
+          <div class="w-10 h-10 rounded-2xl bg-brand-warm text-brand-rose font-serif font-bold text-lg flex items-center justify-center mb-4">1</div>
+          <h4 class="font-serif text-lg font-bold text-brand-dark mb-2">Pick Your Favorites</h4>
+          <p class="text-sm text-brand-muted leading-relaxed">
+            Browse our handmade catalog. Click <strong>"Add to Bag"</strong> or hit <strong>"Order on WhatsApp"</strong> directly from any creation.
+          </p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="bg-white p-7 rounded-3xl border border-brand-border/70 shadow-xs relative">
+          <div class="w-10 h-10 rounded-2xl bg-brand-warm text-brand-rose font-serif font-bold text-lg flex items-center justify-center mb-4">2</div>
+          <h4 class="font-serif text-lg font-bold text-brand-dark mb-2">Confirm on WhatsApp</h4>
+          <p class="text-sm text-brand-muted leading-relaxed">
+            A neatly formatted order with item names and total price opens automatically in your WhatsApp chat with us. We confirm availability and your delivery address.
+          </p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="bg-white p-7 rounded-3xl border border-brand-border/70 shadow-xs relative">
+          <div class="w-10 h-10 rounded-2xl bg-brand-warm text-brand-rose font-serif font-bold text-lg flex items-center justify-center mb-4">3</div>
+          <h4 class="font-serif text-lg font-bold text-brand-dark mb-2">Pay Securely via UPI</h4>
+          <p class="text-sm text-brand-muted leading-relaxed">
+            Pay via Google Pay, PhonePe, Paytm, or BHIM using our verified UPI ID. Share the screenshot, and your package is lovingly prepared and dispatched!
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Footer -->
+  <footer class="bg-white border-t border-brand-border py-12 text-brand-muted text-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
+        
+        <div class="md:col-span-2 space-y-3">
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">🌸</span>
+            <span class="font-serif text-xl font-bold text-brand-dark">Cute Little Crochet</span>
+          </div>
+          <p class="text-sm max-w-md text-brand-muted leading-relaxed">
+            Handcrafted with love, patience, and 100% premium milk cotton yarn in India. Making the world a little softer, one loop at a time.
+          </p>
+          <div class="pt-2 flex items-center gap-3">
+            <a href="#" class="w-8 h-8 rounded-full bg-brand-warm hover:bg-brand-rose hover:text-white flex items-center justify-center transition-colors">
+              <i data-lucide="instagram" class="w-4 h-4"></i>
+            </a>
+            <a href="#" id="footer-whatsapp-link" target="_blank" class="w-8 h-8 rounded-full bg-brand-warm hover:bg-emerald-600 hover:text-white flex items-center justify-center transition-colors">
+              <i data-lucide="message-circle" class="w-4 h-4"></i>
+            </a>
+            <a href="mailto:hello@cutelittlecrochet.in" class="w-8 h-8 rounded-full bg-brand-warm hover:bg-brand-dark hover:text-white flex items-center justify-center transition-colors">
+              <i data-lucide="mail" class="w-4 h-4"></i>
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <h5 class="font-semibold text-brand-dark mb-3 text-xs uppercase tracking-wider">Help & Care</h5>
+          <ul class="space-y-2 text-xs">
+            <li><button class="hover:text-brand-dark text-left btn-show-care">🧶 Yarn Care Guide</button></li>
+            <li><button class="hover:text-brand-dark text-left btn-show-shipping">📦 Shipping & Delivery Policy</button></li>
+            <li><button class="hover:text-brand-dark text-left btn-show-upi">💳 How UPI Payment Works</button></li>
+            <li><button class="hover:text-brand-dark text-left btn-show-custom">✨ Custom Requests</button></li>
+          </ul>
+        </div>
+
+        <div>
+          <h5 class="font-semibold text-brand-dark mb-3 text-xs uppercase tracking-wider">Shop Admin</h5>
+          <p class="text-xs text-brand-muted mb-3">Manage products, update prices, or change WhatsApp contact number.</p>
+          <button id="btn-footer-admin" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-warm hover:bg-brand-border text-brand-dark text-xs font-medium transition-colors">
+            <i data-lucide="lock" class="w-3.5 h-3.5 text-brand-rose"></i>
+            <span>Owner Dashboard</span>
+          </button>
+        </div>
+
+      </div>
+
+      <div class="border-t border-brand-border/60 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-brand-muted">
+        <p>© <span id="current-year"></span> Cute Little Crochet. All rights reserved.</p>
+        <p class="flex items-center gap-1">
+          Crafted with <span class="text-brand-rose">♥</span> in India
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==================== MODALS & DRAWERS ==================== -->
+
+  <!-- 7. Shopping Bag Drawer -->
+  <div id="cart-drawer-overlay" class="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 hidden opacity-0 transition-opacity duration-300"></div>
+  <aside id="cart-drawer" class="fixed top-0 right-0 h-full w-full max-w-md bg-white z-50 shadow-2xl flex flex-col transform translate-x-full transition-transform duration-300 ease-in-out">
+    <!-- Header -->
+    <div class="p-5 border-b border-brand-border flex items-center justify-between bg-brand-cream/60">
+      <div class="flex items-center gap-2">
+        <i data-lucide="shopping-bag" class="w-5 h-5 text-brand-rose"></i>
+        <h4 class="font-serif text-lg font-bold text-brand-dark">Your Shopping Bag</h4>
+        <span id="cart-count-pill" class="bg-brand-warm text-brand-dark text-xs font-semibold px-2 py-0.5 rounded-full">0</span>
+      </div>
+      <button id="btn-close-cart" class="p-1.5 rounded-full hover:bg-brand-warm text-brand-muted hover:text-brand-dark transition-colors">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+    </div>
+
+    <!-- Items List -->
+    <div id="cart-items-container" class="flex-grow overflow-y-auto p-5 space-y-4 divide-y divide-brand-border/40">
+      <!-- Rendered dynamically -->
+    </div>
+
+    <!-- Footer & WhatsApp Checkout -->
+    <div id="cart-footer" class="p-5 border-t border-brand-border bg-brand-cream/30 space-y-4">
+      <!-- Pincode / Details for WhatsApp message -->
+      <div class="space-y-2">
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[11px] font-semibold text-brand-muted mb-1">Your Name</label>
+            <input type="text" id="order-customer-name" placeholder="e.g. Ananya" class="w-full bg-white border border-brand-border rounded-lg px-2.5 py-1.5 text-xs text-brand-dark focus:outline-none focus:ring-1 focus:ring-brand-rose">
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-brand-muted mb-1">Delivery Pincode</label>
+            <input type="text" id="order-customer-pincode" placeholder="e.g. 560038" maxlength="6" class="w-full bg-white border border-brand-border rounded-lg px-2.5 py-1.5 text-xs text-brand-dark focus:outline-none focus:ring-1 focus:ring-brand-rose">
+          </div>
+        </div>
+        <div>
+          <label class="block text-[11px] font-semibold text-brand-muted mb-1">Custom Note / Gift Message (Optional)</label>
+          <input type="text" id="order-customer-note" placeholder="e.g. Gift wrapping please!" class="w-full bg-white border border-brand-border rounded-lg px-2.5 py-1.5 text-xs text-brand-dark focus:outline-none focus:ring-1 focus:ring-brand-rose">
+        </div>
+      </div>
+
+      <!-- Subtotal -->
+      <div class="pt-2 border-t border-brand-border/60 flex items-center justify-between">
+        <span class="text-sm text-brand-muted">Subtotal</span>
+        <span id="cart-subtotal-price" class="font-serif text-xl font-bold text-brand-dark">₹0</span>
+      </div>
+      <p class="text-[11px] text-brand-muted">
+        * Shipping charges (usually ₹50-₹90 across India) will be confirmed on WhatsApp based on your pincode.
+      </p>
+
+      <button id="btn-checkout-whatsapp" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 px-4 rounded-xl font-medium text-sm flex items-center justify-center gap-2 shadow-sm transition-colors">
+        <i data-lucide="message-circle" class="w-4 h-4"></i>
+        <span>Place Order on WhatsApp</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- 8. Product Detail Modal -->
+  <dialog id="product-detail-modal" class="rounded-3xl p-0 w-full max-w-2xl bg-white border border-brand-border shadow-2xl overflow-hidden m-auto">
+    <div class="relative max-h-[90vh] overflow-y-auto">
+      <button id="btn-close-product-modal" class="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-white/90 backdrop-blur-xs text-brand-dark hover:bg-brand-warm flex items-center justify-center shadow-sm transition-colors">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="grid grid-cols-1 md:grid-cols-2">
+        <div class="aspect-square bg-brand-warm relative">
+          <img id="modal-product-image" src="" alt="" class="w-full h-full object-cover">
+          <span id="modal-product-badge" class="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold tracking-wide shadow-xs"></span>
+        </div>
+
+        <div class="p-6 sm:p-7 flex flex-col justify-between">
+          <div>
+            <span id="modal-product-category" class="text-xs uppercase tracking-widest text-brand-rose font-bold">Category</span>
+            <h3 id="modal-product-title" class="font-serif text-2xl font-bold text-brand-dark mt-1">Product Title</h3>
+            
+            <div class="flex items-baseline gap-2 mt-2">
+              <span id="modal-product-price" class="font-serif text-2xl font-bold text-brand-dark">₹0</span>
+              <span id="modal-product-original-price" class="text-sm line-through text-brand-muted/70"></span>
+            </div>
+
+            <p id="modal-product-description" class="text-sm text-brand-muted mt-4 leading-relaxed"></p>
+
+            <div class="mt-4 pt-4 border-t border-brand-border/60 space-y-2 text-xs text-brand-muted">
+              <p><strong>🧶 Yarn:</strong> <span id="modal-product-yarn">100% Premium Milk Cotton</span></p>
+              <p><strong>📏 Dimensions:</strong> <span id="modal-product-dimensions">Standard size</span></p>
+              <p><strong>🧼 Care:</strong> <span id="modal-product-care">Hand wash cold, dry flat</span></p>
+            </div>
+          </div>
+
+          <div class="pt-6 space-y-2.5">
+            <button id="modal-btn-add-to-bag" class="w-full bg-brand-dark hover:bg-brand-rose text-white py-2.5 px-4 rounded-xl font-medium text-xs sm:text-sm flex items-center justify-center gap-2 transition-colors">
+              <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+              <span>Add to Bag</span>
+            </button>
+            <button id="modal-btn-direct-whatsapp" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 px-4 rounded-xl font-medium text-xs sm:text-sm flex items-center justify-center gap-2 transition-colors">
+              <i data-lucide="message-circle" class="w-4 h-4"></i>
+              <span>Instant Order via WhatsApp</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- 9. Owner Admin Panel Modal -->
+  <dialog id="admin-modal" class="rounded-3xl p-0 w-full max-w-4xl bg-white border border-brand-border shadow-2xl overflow-hidden m-auto">
+    <div class="max-h-[90vh] flex flex-col">
+      <!-- Admin Header -->
+      <div class="p-5 border-b border-brand-border bg-brand-cream flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-brand-warm text-brand-rose flex items-center justify-center">
+            <i data-lucide="shield-check" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h4 class="font-serif text-lg font-bold text-brand-dark">Cute Little Crochet — Shop Manager</h4>
+              <span id="admin-connection-badge" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                <span id="admin-connection-status-text">Demo Mode</span>
+              </span>
+            </div>
+            <p class="text-xs text-brand-muted">Update catalog, photos, prices & WhatsApp numbers</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="btn-admin-signout" class="hidden text-xs text-red-600 hover:text-red-800 font-semibold px-2.5 py-1.5 rounded-xl hover:bg-red-50 transition-colors">
+            Sign Out
+          </button>
+          <button id="btn-close-admin-modal" class="p-1.5 rounded-full hover:bg-brand-warm text-brand-muted hover:text-brand-dark transition-colors">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Owner Authentication Screen (Locked State) -->
+      <div id="admin-auth-screen" class="p-6 sm:p-10 max-w-md mx-auto my-auto w-full">
+        <div class="text-center space-y-3 mb-6">
+          <div class="w-14 h-14 rounded-2xl bg-brand-warm text-brand-rose mx-auto flex items-center justify-center">
+            <i data-lucide="lock" class="w-7 h-7"></i>
+          </div>
+          <h4 class="font-serif text-xl font-bold text-brand-dark">Owner Login</h4>
+          <p id="admin-auth-subtitle" class="text-xs text-brand-muted">
+            Sign in with your owner account to manage creations and cloud storage.
+          </p>
+        </div>
+
+        <!-- Supabase Email & Password Form -->
+        <form id="form-supabase-auth" class="space-y-3">
+          <div>
+            <label class="block text-xs font-semibold text-brand-dark mb-1">Owner Email</label>
+            <input type="email" id="admin-email-input" placeholder="you@cutelittlecrochet.in" class="w-full bg-brand-cream/40 border border-brand-border rounded-xl px-3 py-2 text-xs text-brand-dark focus:outline-none focus:ring-1 focus:ring-brand-rose">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-brand-dark mb-1">Password</label>
+            <input type="password" id="admin-password-input" placeholder="••••••••" class="w-full bg-brand-cream/40 border border-brand-border rounded-xl px-3 py-2 text-xs text-brand-dark focus:outline-none focus:ring-1 focus:ring-brand-rose">
+          </div>
+          <button type="submit" id="btn-submit-auth" class="w-full bg-brand-dark hover:bg-brand-rose text-white py-2.5 px-4 rounded-xl text-xs font-semibold transition-colors flex items-center justify-center gap-2">
+            <i data-lucide="log-in" class="w-4 h-4"></i>
+            <span>Log In via Cloud</span>
+          </button>
+        </form>
+
+        <!-- Divider -->
+        <div class="relative my-5">
+          <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-brand-border"></div></div>
+          <div class="relative flex justify-center text-[11px] uppercase tracking-wider text-brand-muted"><span class="bg-white px-2">OR</span></div>
+        </div>
+
+        <!-- Fallback Offline / Demo PIN -->
+        <div class="p-3 bg-brand-cream/60 border border-brand-border rounded-2xl text-center space-y-2">
+          <p class="text-[11px] text-brand-muted">
+            Testing in <strong>Demo / Local Mode</strong>?
+          </p>
+          <div class="flex items-center justify-center gap-2">
+            <input type="password" id="admin-pin-input" maxlength="6" placeholder="Demo PIN: 1234" class="text-center font-mono text-sm tracking-widest w-40 bg-white border border-brand-border rounded-xl py-1.5 px-3 focus:outline-none focus:ring-1 focus:ring-brand-rose">
+            <button type="button" id="btn-submit-pin" class="bg-brand-warm hover:bg-brand-border text-brand-dark py-1.5 px-3 rounded-xl text-xs font-semibold transition-colors">
+              Unlock
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Authenticated Content (Tabs) -->
+      <div id="admin-authenticated-screen" class="hidden flex-grow flex flex-col overflow-hidden">
+        <!-- Tabs Header -->
+        <div class="flex border-b border-brand-border bg-brand-warm/30 px-6 gap-2 text-xs font-medium">
+          <button data-admin-tab="items" class="admin-tab active py-3 px-3 border-b-2 border-brand-rose text-brand-rose font-semibold flex items-center gap-1.5">
+            <i data-lucide="package" class="w-4 h-4"></i>
+            <span>Manage Catalog</span>
+          </button>
+          <button data-admin-tab="add" class="admin-tab py-3 px-3 border-b-2 border-transparent text-brand-muted hover:text-brand-dark flex items-center gap-1.5">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+            <span>Add New Creation</span>
+          </button>
+          <button data-admin-tab="settings" class="admin-tab py-3 px-3 border-b-2 border-transparent text-brand-muted hover:text-brand-dark flex items-center gap-1.5">
+            <i data-lucide="settings" class="w-4 h-4"></i>
+            <span>Shop Settings & UPI</span>
+          </button>
+          <button data-admin-tab="backup" class="admin-tab py-3 px-3 border-b-2 border-transparent text-brand-muted hover:text-brand-dark flex items-center gap-1.5">
+            <i data-lucide="download-cloud" class="w-4 h-4"></i>
+            <span>Backup & Reset</span>
+          </button>
+        </div>
+
+        <!-- Tab 1: Catalog List -->
+        <div id="tab-admin-items" class="p-6 overflow-y-auto flex-grow space-y-4">
+          <div class="flex items-center justify-between">
+            <p class="text-xs text-brand-muted font-medium">All items in your store (<span id="admin-item-count">0</span>)</p>
+            <button id="btn-go-to-add" class="inline-flex items-center gap-1.5 bg-brand-rose text-white text-xs px-3 py-1.5 rounded-lg hover:bg-brand-rose-dark transition-colors">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+              <span>Add Creation</span>
+            </button>
+          </div>
+
+          <div class="border border-brand-border rounded-2xl overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs text-brand-dark">
+                <thead class="bg-brand-cream/60 border-b border-brand-border text-brand-muted font-semibold">
+                  <tr>
+                    <th class="p-3">Item</th>
+                    <th class="p-3">Category</th>
+                    <th class="p-3">Price (₹)</th>
+                    <th class="p-3">Status</th>
+                    <th class="p-3 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-items-table-body" class="divide-y divide-brand-border/50">
+                  <!-- Injected via JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Add New Creation Form -->
+        <div id="tab-admin-add" class="p-6 overflow-y-auto flex-grow hidden">
+          <form id="form-add-creation" class="max-w-2xl mx-auto space-y-4">
+            <h5 class="font-serif text-lg font-bold text-brand-dark">Add a New Handmade Creation</h5>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="sm:col-span-2">
+                <label class="block text-xs font-semibold text-brand-dark mb-1">Creation Name *</label>
+                <input type="text" id="new-item-name" required placeholder="e.g. Lavender Daisy Shoulder Bag" class="w-full bg-brand-cream/40 border border-brand-border rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-brand-rose">
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-brand-dark mb-1">Category *</label>
+                <select id="new-item-category" class="w-full bg-brand-cream/40 border border-brand-border rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-brand-rose">
+                  <option value="plushies">🧸 Plushies & Amigurumi</option>
+                  <option value="bags">👜 Bags & Totes</option>
+                  <option value="wearables">🧶 Wearables & Hats</option>
+                  <option value="accessories">🌸 Hair Accessories</option>
+                  <option value="home">☕ Home & Coasters</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-brand-dark mb-1">Availability Status *</label>
+                <select id="new-item-badge" class="w-full bg-brand-cream/40 border border-brand-border rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-brand-rose">
+                  <option value="ready">Ready to Ship</option>
+                  <option value="custom">Made to Order (3-5 days)</option>
+                  <option value="sold">Sold Out</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-brand-dark mb-1">Price in ₹ (INR) *</label>
+                <input type="number" id="new-item-price" required min="1" placeholder="e.g. 799" class="w-full bg-brand-cream/40 border border-brand-border rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-brand-rose">
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-brand-dark mb-1">Original Price ₹ (Optional strike-through)</label>
+                <input type="number" id="new-item-original-price" min="1" placeholder="e.g. 999" class="w-full bg-brand-cream/40 border border-brand-border rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-brand-rose">
+              </div>
+
+              <!-- Image Upload / URL -->
+              <div class="sm:col-span-2 space-y-2">
+                <label class="block text-xs font-semibold text-brand-dark">Item Photo *</label>
+                <div class="flex flex-col sm:flex-row gap-3 items-center">
+                  <input type="file" id="new-item-file" accept="image/*" class="w-full text-xs text-brand-muted file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-brand-warm file:text-brand-dark hover:file:bg-brand-border cursor-pointer">
+                  <span class="text-xs text-brand-muted font-medium">OR</span>
+                  <input type="url" id="new-item-image-url" placeholder="Paste image web URL" class="w-full bg-brand-cream/40 border border-brand-border rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-brand-rose">
+                </div>
+                <!-- Image Preview Thumbnail -->
+                <div id="image-preview-box" class="hidden mt-2 p-2 bg-brand-cream rounded-xl border border-brand-border flex items-center gap-3">
+                  <img id="image-preview-thumb" src="" alt="Preview" class="w-14 h-14 object-cover rounded-lg">
+                  <span class="text-xs text-brand-muted font-medium">Photo ready to upload!</span>
+                </div>
+              </div>
+
+              <div class="sm:col-span-2">
+                <label class="block text-xs font-semibold text-brand-dark mb-1">Description *</label>
+                <textarea id="new-item-description" rows="3" required placeholder="Describe your creation, dimensions, softness, colors..." class="w-full bg-brand-cream/40 border border-brand-border rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-brand-rose"></textarea>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-brand-dark mb-1">Yarn Material</label>
+                <input type="text" id="new-item-yarn" value="100% Premium Milk Cotton" class="w-full bg-brand-cream/40 border border-brand-border rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-brand-rose">
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-brand-dark mb-1">Dimensions / Size</label>
+                <input type="text" id="new-item-dimensions" placeholder="e.g. 24cm x 20cm" class="w-full bg-brand-cream/40 border border-brand-border rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-brand-rose">
+              </div>
+            </div>
+
+            <div class="pt-4 flex justify-end gap-3">
+              <button type="reset" class="px-4 py-2 rounded-xl text-xs font-medium text-brand-muted hover:text-brand-dark">Clear</button>
+              <button type="submit" class="bg-brand-rose hover:bg-brand-rose-dark text-white px-6 py-2 rounded-xl text-xs font-semibold shadow-xs transition-colors">
+                Publish to Storefront
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Tab 3: Shop Settings & UPI -->
+        <div id="tab-admin-settings" class="p-6 overflow-y-auto flex-grow hidden space-y-6 max-w-xl mx-auto">
+          <!-- Supabase Cloud Connection Card -->
+          <div class="p-5 bg-gradient-to-br from-brand-warm/60 via-white to-brand-cream/80 border border-brand-border rounded-2xl space-y-3.5 shadow-xs">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                  <i data-lucide="cloud" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <h6 class="text-xs font-bold text-brand-dark">Supabase Cloud Database & Storage</h6>
+                  <p class="text-[11px] text-brand-muted">Makes your shop live across India with cloud photo uploads</p>
+                </div>
+              </div>
+              <span id="settings-supabase-status" class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 border border-amber-200">
+                Demo Mode
+              </span>
+            </div>
+
+            <div class="space-y-2.5 pt-1">
+              <div>
+                <label class="block text-[11px] font-semibold text-brand-dark mb-1">Supabase Project URL</label>
+                <input type="url" id="setting-supabase-url" placeholder="https://yourprojectid.supabase.co" class="w-full bg-white border border-brand-border rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-brand-rose">
+              </div>
+
+              <div>
+                <label class="block text-[11px] font-semibold text-brand-dark mb-1">Supabase Anon Public Key</label>
+                <input type="password" id="setting-supabase-anon-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6..." class="w-full bg-white border border-brand-border rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-brand-rose">
+              </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pt-2 border-t border-brand-border/60">
+              <p class="text-[11px] text-brand-muted">
+                Run <code>setup_supabase.sql</code> in your Supabase SQL Editor first.
+              </p>
+              <button type="button" id="btn-connect-supabase" class="bg-brand-rose hover:bg-brand-rose-dark text-white text-xs px-4 py-1.5 rounded-xl font-semibold shadow-xs transition-colors">
+                Save & Connect Cloud DB
+              </button>
+            </div>
+          </div>
+
+          <form id="form-shop-settings" class="space-y-5">
+            <h5 class="font-serif text-lg font-bold text-brand-dark">Contact & Payment Configurations</h5>
+            
+            <div class="space-y-4">
+              <div>
+                <label class="block text-xs font-semibold text-brand-dark mb-1">WhatsApp Business Number (with country code)</label>
+                <input type="text" id="setting-whatsapp" placeholder="e.g. 919876543210" class="w-full bg-brand-cream/40 border border-brand-border rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-brand-rose">
+                <p class="text-[11px] text-brand-muted mt-1">Orders will be directed to this WhatsApp number without spaces or plus signs (e.g., <code>919876543210</code>).</p>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-brand-dark mb-1">UPI ID (VPA)</label>
+                <input type="text" id="setting-upi" placeholder="e.g. cutelittlecrochet@okaxis" class="w-full bg-brand-cream/40 border border-brand-border rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-brand-rose">
+                <p class="text-[11px] text-brand-muted mt-1">Displayed to customers for paying via Google Pay, PhonePe, or Paytm.</p>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-brand-dark mb-1">Top Announcement Banner Text</label>
+                <input type="text" id="setting-announcement" placeholder="e.g. Handmade with love in India 🇮🇳 • Free shipping on orders above ₹1,200!" class="w-full bg-brand-cream/40 border border-brand-border rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-brand-rose">
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-brand-dark mb-1">Change Admin PIN</label>
+                <input type="password" id="setting-new-pin" placeholder="Set new 4-digit PIN" maxlength="6" class="w-full bg-brand-cream/40 border border-brand-border rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-brand-rose">
+              </div>
+            </div>
+
+            <button type="submit" class="bg-brand-dark hover:bg-brand-rose text-white px-6 py-2 rounded-xl text-xs font-semibold transition-colors">
+              Save Settings
+            </button>
+          </form>
+        </div>
+
+        <!-- Tab 4: Backup & Reset -->
+        <div id="tab-admin-backup" class="p-6 overflow-y-auto flex-grow hidden space-y-6 max-w-xl mx-auto">
+          <div>
+            <h5 class="font-serif text-lg font-bold text-brand-dark mb-2">Catalog Backup & Portability</h5>
+            <p class="text-xs text-brand-muted leading-relaxed mb-4">
+              All your creations are saved right in your browser storage. You can download a JSON file to keep a permanent backup on your laptop or move your items to another device.
+            </p>
+            <div class="flex flex-wrap gap-3">
+              <button id="btn-export-catalog" class="inline-flex items-center gap-2 bg-brand-dark text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-brand-rose transition-colors">
+                <i data-lucide="download" class="w-4 h-4"></i>
+                <span>Download Catalog (JSON)</span>
+              </button>
+
+              <label class="inline-flex items-center gap-2 bg-brand-warm hover:bg-brand-border text-brand-dark px-4 py-2 rounded-xl text-xs font-semibold cursor-pointer transition-colors">
+                <i data-lucide="upload" class="w-4 h-4"></i>
+                <span>Restore Catalog from File</span>
+                <input type="file" id="input-import-catalog" accept=".json" class="hidden">
+              </label>
+            </div>
+          </div>
+
+          <div class="pt-6 border-t border-brand-border">
+            <h5 class="text-xs font-bold text-red-700 uppercase tracking-wider mb-2">Danger Zone</h5>
+            <p class="text-xs text-brand-muted mb-3">Reset your store to the original sample creations. Any newly added items will be replaced.</p>
+            <button id="btn-reset-defaults" class="px-4 py-2 rounded-xl bg-red-50 text-red-700 border border-red-200 text-xs font-semibold hover:bg-red-100 transition-colors">
+              Reset to Default Demo Items
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </dialog>
+
+  <!-- 10. Owner Admin Edit Item Modal -->
+  <dialog id="admin-edit-modal" class="rounded-3xl p-0 w-full max-w-2xl bg-white border border-brand-border shadow-2xl overflow-hidden m-auto">
+    <div class="max-h-[90vh] flex flex-col">
+      <!-- Edit Header -->
+      <div class="p-5 border-b border-brand-border bg-brand-cream flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-brand-warm text-brand-rose flex items-center justify-center">
+            <i data-lucide="edit-3" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h4 class="font-serif text-lg font-bold text-brand-dark">Edit Creation</h4>
+            <p class="text-xs text-brand-muted">Update price, photo, availability, and description</p>
+          </div>
+        </div>
+        <button id="btn-close-edit-modal" class="p-1.5 rounded-full hover:bg-brand-warm text-brand-muted hover:text-brand-dark transition-colors">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Edit Form -->
+      <form id="form-edit-creation" class="p-6 overflow-y-auto space-y-4">
+        <input type="hidden" id="edit-item-id">
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-semibold text-brand-dark mb-1">Creation Name *</label>
+            <input type="text" id="edit-item-name" required placeholder="e.g. Lavender Daisy Shoulder Bag" class="w-full bg-brand-cream/40 border border-brand-border rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-brand-rose">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-brand-dark mb-1">Category *</label>
+            <select id="edit-item-category" class="w-full bg-brand-cream/40 border border-brand-border rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-brand-rose">
+              <option value="plushies">🧸 Plushies & Amigurumi</option>
+              <option value="bags">👜 Bags & Totes</option>
+              <option value="wearables">🧶 Wearables & Hats</option>
+              <option value="accessories">🌸 Hair Accessories</option>
+              <option value="home">☕ Home & Coasters</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-brand-dark mb-1">Availability Status *</label>
+            <select id="edit-item-badge" class="w-full bg-brand-cream/40 border border-brand-border rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-brand-rose">
+              <option value="ready">Ready to Ship</option>
+              <option value="custom">Made to Order (3-5 days)</option>
+              <option value="sold">Sold Out</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-brand-dark mb-1">Price in ₹ (INR) *</label>
+            <input type="number" id="edit-item-price" required min="1" placeholder="e.g. 799" class="w-full bg-brand-cream/40 border border-brand-border rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-brand-rose">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-brand-dark mb-1">Original Price ₹ (Strike-through)</label>
+            <input type="number" id="edit-item-original-price" min="1" placeholder="Leave blank if no discount" class="w-full bg-brand-cream/40 border border-brand-border rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-brand-rose">
+          </div>
+
+          <!-- Photo Update Section -->
+          <div class="sm:col-span-2 space-y-2">
+            <label class="block text-xs font-semibold text-brand-dark">Item Photo (Keep existing or upload new)</label>
+            <div class="flex items-center gap-3 p-2 bg-brand-cream rounded-xl border border-brand-border">
+              <img id="edit-image-preview-thumb" src="" alt="Current photo" class="w-14 h-14 object-cover rounded-lg bg-brand-warm shrink-0 border border-brand-border">
+              <div class="space-y-1.5 flex-grow">
+                <input type="file" id="edit-item-file" accept="image/*" class="w-full text-xs text-brand-muted file:mr-2 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-brand-warm file:text-brand-dark hover:file:bg-brand-border cursor-pointer">
+                <input type="url" id="edit-item-image-url" placeholder="Or paste replacement image web URL" class="w-full bg-white border border-brand-border rounded-lg px-2.5 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-brand-rose">
+              </div>
+            </div>
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-semibold text-brand-dark mb-1">Description *</label>
+            <textarea id="edit-item-description" rows="3" required placeholder="Describe your creation..." class="w-full bg-brand-cream/40 border border-brand-border rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-brand-rose"></textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-brand-dark mb-1">Yarn Material</label>
+            <input type="text" id="edit-item-yarn" placeholder="e.g. 100% Milk Cotton" class="w-full bg-brand-cream/40 border border-brand-border rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-brand-rose">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-brand-dark mb-1">Dimensions / Size</label>
+            <input type="text" id="edit-item-dimensions" placeholder="e.g. 24cm x 20cm" class="w-full bg-brand-cream/40 border border-brand-border rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-brand-rose">
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-semibold text-brand-dark mb-1">Care Instructions</label>
+            <input type="text" id="edit-item-care" placeholder="e.g. Gentle hand wash cold, dry flat" class="w-full bg-brand-cream/40 border border-brand-border rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-brand-rose">
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-brand-border flex justify-end gap-2.5">
+          <button type="button" id="btn-cancel-edit" class="px-4 py-2 rounded-xl text-xs font-medium text-brand-muted hover:text-brand-dark hover:bg-brand-warm transition-colors">
+            Cancel
+          </button>
+          <button type="submit" class="bg-brand-rose hover:bg-brand-rose-dark text-white px-6 py-2 rounded-xl text-xs font-semibold shadow-xs transition-colors">
+            Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- 11. Educational Guide Modal (How WhatsApp & UPI ordering works) -->
+  <dialog id="guide-modal" class="rounded-3xl p-0 w-full max-w-lg bg-white border border-brand-border shadow-2xl overflow-hidden m-auto">
+    <div class="p-6">
+      <div class="flex items-center justify-between pb-4 border-b border-brand-border">
+        <h4 class="font-serif text-xl font-bold text-brand-dark flex items-center gap-2">
+          <span>🌸</span>
+          <span>Shopping at Cute Little Crochet</span>
+        </h4>
+        <button id="btn-close-guide-modal" class="p-1 rounded-full hover:bg-brand-warm text-brand-muted hover:text-brand-dark">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="py-5 space-y-4 text-xs sm:text-sm text-brand-muted leading-relaxed">
+        <div class="flex gap-3">
+          <div class="w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold shrink-0">1</div>
+          <p><strong class="text-brand-dark">WhatsApp Checkout:</strong> When you hit "Order on WhatsApp", an itemized message with your selection and pincode is sent straight to the creator.</p>
+        </div>
+        <div class="flex gap-3">
+          <div class="w-7 h-7 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold shrink-0">2</div>
+          <p><strong class="text-brand-dark">Instant Confirmation:</strong> We confirm if the item is ready in stock or being hand-crocheted for you, plus calculate standard shipping based on your location.</p>
+        </div>
+        <div class="flex gap-3">
+          <div class="w-7 h-7 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center font-bold shrink-0">3</div>
+          <p><strong class="text-brand-dark">UPI Payment:</strong> Pay directly using GPay, PhonePe, Paytm, or BHIM. No extra gateway fees or credit card leaks!</p>
+        </div>
+        <div class="flex gap-3">
+          <div class="w-7 h-7 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center font-bold shrink-0">4</div>
+          <p><strong class="text-brand-dark">Carefully Packaged:</strong> Packed with eco-friendly wrapping and dispatched via Delhivery / India Post with live tracking.</p>
+        </div>
+      </div>
+
+      <div class="pt-4 border-t border-brand-border flex justify-end">
+        <button id="btn-close-guide-action" class="bg-brand-rose text-white px-5 py-2 rounded-xl text-xs font-semibold hover:bg-brand-rose-dark transition-colors">
+          Got It! Let's Shop
+        </button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- Application Logic -->
+  <script src="app.js"></script>
+</body>
+</html>
