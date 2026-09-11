@@ -112,9 +112,9 @@ const DEFAULT_PRODUCTS = [
 ];
 
 const DEFAULT_SETTINGS = {
-  whatsapp: '919876543210',
-  upi: 'cutelittlecrochet@okhdfcbank',
-  announcement: 'Handmade with 100% love in India 🇮🇳 • Free shipping on orders above ₹1,200!',
+  whatsapp: (typeof APP_CONFIG !== 'undefined' && APP_CONFIG.DEFAULT_WHATSAPP) ? APP_CONFIG.DEFAULT_WHATSAPP : '918197477497',
+  upi: (typeof APP_CONFIG !== 'undefined' && APP_CONFIG.DEFAULT_UPI) ? APP_CONFIG.DEFAULT_UPI : 'cutelittlecrochet@okhdfcbank',
+  announcement: (typeof APP_CONFIG !== 'undefined' && APP_CONFIG.DEFAULT_ANNOUNCEMENT) ? APP_CONFIG.DEFAULT_ANNOUNCEMENT : 'Handmade with 100% love in India 🇮🇳 • Free shipping on orders above ₹1,200!',
   pin: '1234'
 };
 
@@ -252,6 +252,10 @@ function loadStateFromStorage() {
   if (storedSettings) {
     try {
       state.settings = { ...DEFAULT_SETTINGS, ...JSON.parse(storedSettings) };
+      if (state.settings.whatsapp === '919876543210') {
+        state.settings.whatsapp = DEFAULT_SETTINGS.whatsapp;
+        saveSettingsToStorage();
+      }
     } catch (e) {
       state.settings = { ...DEFAULT_SETTINGS };
     }
@@ -662,7 +666,7 @@ function handleSingleItemWhatsApp(productId) {
   const product = state.products.find(p => p.id === productId);
   if (!product) return;
 
-  const phone = state.settings.whatsapp || (typeof APP_CONFIG !== 'undefined' ? APP_CONFIG.DEFAULT_WHATSAPP : '919876543210');
+  const phone = state.settings.whatsapp || (typeof APP_CONFIG !== 'undefined' ? APP_CONFIG.DEFAULT_WHATSAPP : '918197477497');
   const statusNote = product.badge === 'custom' ? '(Made to Order, approx 3-5 days)' : '';
 
   const message = 
@@ -691,7 +695,7 @@ function handleCartWhatsAppCheckout() {
   const pincode = pincodeInput.value.trim() || 'Not specified yet';
   const note = noteInput.value.trim();
 
-  const phone = state.settings.whatsapp || (typeof APP_CONFIG !== 'undefined' ? APP_CONFIG.DEFAULT_WHATSAPP : '919876543210');
+  const phone = state.settings.whatsapp || (typeof APP_CONFIG !== 'undefined' ? APP_CONFIG.DEFAULT_WHATSAPP : '918197477497');
   const subtotal = state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
   let itemsList = state.cart.map(item => `• ${item.quantity}x ${item.name} - ₹${(item.price * item.quantity).toLocaleString('en-IN')}`).join('\n');
@@ -1511,7 +1515,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Custom commission prompt
   const openCustomCommissionWhatsApp = () => {
-    const phone = state.settings.whatsapp || (typeof APP_CONFIG !== 'undefined' ? APP_CONFIG.DEFAULT_WHATSAPP : '919876543210');
+    const phone = state.settings.whatsapp || (typeof APP_CONFIG !== 'undefined' ? APP_CONFIG.DEFAULT_WHATSAPP : '918197477497');
     const message = 
 `🌸 *Cute Little Crochet - Custom Commission Request* 🌸
 -----------------------------------------

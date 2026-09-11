@@ -94,7 +94,7 @@ That's it! Your store is now connected to a live cloud database and photo storag
    - Click **"Save Changes"**.
 5. **To update contact and UPI details:**
    - Go to **"Shop Settings & UPI"**.
-   - Set your **WhatsApp Business Number** with country code `91` (e.g. `919876543210`).
+   - Set your **WhatsApp Business Number** with country code `91` (e.g. `918197477497`).
    - Set your **UPI ID** (e.g. `yourname@okhdfcbank` or `phonepe`).
    - Click **"Save Settings"**.
 
