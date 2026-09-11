@@ -12,7 +12,7 @@ const APP_CONFIG = {
   SUPABASE_ANON_KEY: '', // e.g. 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
 
   // Default shop contact info
-  DEFAULT_WHATSAPP: '919876543210',
+  DEFAULT_WHATSAPP: '918197477497',
   DEFAULT_UPI: 'cutelittlecrochet@okhdfcbank',
   DEFAULT_ANNOUNCEMENT: 'Handmade with 100% love in India 🇮🇳 • Free shipping on orders above ₹1,200!'
 };
