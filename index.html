@@ -85,16 +85,27 @@
   <header class="sticky top-0 z-40 bg-brand-cream/90 backdrop-blur-md border-b border-brand-border/60 transition-all duration-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 sm:h-20 flex items-center justify-between">
       
-      <!-- Brand Logo -->
-      <a href="#" class="flex items-center gap-3 group">
-        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-brand-warm flex items-center justify-center text-xl shadow-inner border border-brand-border/60 group-hover:scale-105 transition-transform">
-          🌸
-        </div>
-        <div>
-          <h1 class="font-serif text-xl sm:text-2xl font-bold tracking-tight text-brand-dark group-hover:text-brand-rose transition-colors">Cute Little Crochet</h1>
-          <p class="text-[11px] uppercase tracking-widest text-brand-muted font-medium">Handmade Boutique</p>
-        </div>
-      </a>
+      <!-- Left: Toggle button + Brand Logo -->
+      <div class="flex items-center gap-3 sm:gap-4">
+        <button 
+          id="btn-toggle-sidebar" 
+          class="p-2 sm:p-2.5 rounded-2xl bg-white hover:bg-brand-warm border border-brand-border text-brand-dark shadow-2xs hover:shadow-xs transition-all flex items-center justify-center group"
+          aria-label="Toggle navigation menu"
+          title="Open Menu"
+        >
+          <i data-lucide="menu" class="w-5 h-5 text-brand-dark group-hover:text-brand-rose transition-colors"></i>
+        </button>
+
+        <a href="#" class="flex items-center gap-3 group">
+          <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-brand-warm flex items-center justify-center text-xl shadow-inner border border-brand-border/60 group-hover:scale-105 transition-transform">
+            🌸
+          </div>
+          <div>
+            <h1 class="font-serif text-xl sm:text-2xl font-bold tracking-tight text-brand-dark group-hover:text-brand-rose transition-colors">Cute Little Crochet</h1>
+            <p class="text-[11px] uppercase tracking-widest text-brand-muted font-medium">Handmade Boutique</p>
+          </div>
+        </a>
+      </div>
 
       <!-- Search & Cart Actions -->
       <div class="flex items-center gap-3 sm:gap-4">
@@ -408,6 +419,138 @@
   </footer>
 
   <!-- ==================== MODALS & DRAWERS ==================== -->
+
+  <!-- 6. Navigation Sidebar Drawer (Left) -->
+  <div id="sidebar-overlay" class="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 hidden opacity-0 transition-opacity duration-300"></div>
+  <aside id="nav-sidebar" class="fixed top-0 left-0 h-full w-full max-w-xs sm:max-w-sm bg-white z-50 shadow-2xl flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out border-r border-brand-border">
+    <!-- Header -->
+    <div class="p-5 border-b border-brand-border flex items-center justify-between bg-brand-cream/60">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-brand-warm flex items-center justify-center text-xl shadow-inner border border-brand-border/60">
+          🌸
+        </div>
+        <div>
+          <h4 class="font-serif text-base font-bold text-brand-dark">Cute Little Crochet</h4>
+          <p class="text-[10px] uppercase tracking-wider text-brand-muted font-medium">Handmade Boutique</p>
+        </div>
+      </div>
+      <button id="btn-close-sidebar" class="p-2 rounded-full hover:bg-brand-warm text-brand-muted hover:text-brand-dark transition-colors" aria-label="Close menu">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+    </div>
+
+    <!-- Scrollable Content -->
+    <div class="flex-grow overflow-y-auto p-5 space-y-6">
+      <!-- Primary Navigation Links -->
+      <div class="space-y-1">
+        <p class="text-[11px] uppercase tracking-wider text-brand-muted font-bold px-3 pb-1">Navigation</p>
+        <button id="sidebar-link-home" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-sm font-medium text-brand-dark hover:bg-brand-warm transition-all text-left">
+          <i data-lucide="home" class="w-4 h-4 text-brand-rose"></i>
+          <span>Home</span>
+        </button>
+        <button id="sidebar-link-catalog" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-sm font-medium text-brand-dark hover:bg-brand-warm transition-all text-left">
+          <i data-lucide="layout-grid" class="w-4 h-4 text-brand-sage"></i>
+          <span>Browse All Items</span>
+        </button>
+        <button id="sidebar-link-guide" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-sm font-medium text-brand-dark hover:bg-brand-warm transition-all text-left">
+          <i data-lucide="help-circle" class="w-4 h-4 text-amber-600"></i>
+          <span>How to Order & UPI</span>
+        </button>
+        <button id="sidebar-link-custom" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-sm font-medium text-brand-dark hover:bg-brand-warm transition-all text-left">
+          <i data-lucide="sparkles" class="w-4 h-4 text-brand-rose"></i>
+          <span>Custom Commissions</span>
+        </button>
+      </div>
+
+      <!-- Categories & Filters -->
+      <div class="space-y-1 border-t border-brand-border/60 pt-4">
+        <div class="flex items-center justify-between px-3 pb-1">
+          <p class="text-[11px] uppercase tracking-wider text-brand-muted font-bold">Categories</p>
+          <span class="text-[10px] text-brand-rose font-medium">Filter Shop</span>
+        </div>
+        
+        <div class="space-y-1" id="sidebar-categories-list">
+          <button data-cat="all" class="sidebar-cat-btn active w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-sm font-medium transition-all text-left bg-brand-dark text-white shadow-xs">
+            <span class="flex items-center gap-2.5">
+              <span>✨</span>
+              <span>All Pieces</span>
+            </span>
+            <i data-lucide="chevron-right" class="w-4 h-4 opacity-70"></i>
+          </button>
+          
+          <button data-cat="plushies" class="sidebar-cat-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-sm font-medium text-brand-dark hover:bg-brand-warm transition-all text-left">
+            <span class="flex items-center gap-2.5">
+              <span>🧸</span>
+              <span>Plushies & Amigurumi</span>
+            </span>
+            <i data-lucide="chevron-right" class="w-4 h-4 opacity-40"></i>
+          </button>
+
+          <button data-cat="bags" class="sidebar-cat-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-sm font-medium text-brand-dark hover:bg-brand-warm transition-all text-left">
+            <span class="flex items-center gap-2.5">
+              <span>👜</span>
+              <span>Bags & Totes</span>
+            </span>
+            <i data-lucide="chevron-right" class="w-4 h-4 opacity-40"></i>
+          </button>
+
+          <button data-cat="wearables" class="sidebar-cat-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-sm font-medium text-brand-dark hover:bg-brand-warm transition-all text-left">
+            <span class="flex items-center gap-2.5">
+              <span>🧶</span>
+              <span>Wearables & Hats</span>
+            </span>
+            <i data-lucide="chevron-right" class="w-4 h-4 opacity-40"></i>
+          </button>
+
+          <button data-cat="accessories" class="sidebar-cat-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-sm font-medium text-brand-dark hover:bg-brand-warm transition-all text-left">
+            <span class="flex items-center gap-2.5">
+              <span>🌸</span>
+              <span>Hair Accessories</span>
+            </span>
+            <i data-lucide="chevron-right" class="w-4 h-4 opacity-40"></i>
+          </button>
+
+          <button data-cat="home" class="sidebar-cat-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-sm font-medium text-brand-dark hover:bg-brand-warm transition-all text-left">
+            <span class="flex items-center gap-2.5">
+              <span>☕</span>
+              <span>Home & Coasters</span>
+            </span>
+            <i data-lucide="chevron-right" class="w-4 h-4 opacity-40"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Contact & Help Section -->
+      <div class="space-y-2.5 border-t border-brand-border/60 pt-4">
+        <p class="text-[11px] uppercase tracking-wider text-brand-muted font-bold px-3 pb-1">Get in Touch</p>
+        
+        <button id="sidebar-btn-whatsapp" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2.5 rounded-2xl text-xs font-semibold flex items-center justify-center gap-2 shadow-xs transition-colors">
+          <i data-lucide="message-circle" class="w-4 h-4"></i>
+          <span>Chat on WhatsApp</span>
+        </button>
+
+        <div class="grid grid-cols-2 gap-2 pt-1">
+          <button class="btn-show-care px-3 py-2 rounded-xl bg-brand-warm/60 hover:bg-brand-warm text-brand-dark text-xs font-medium text-left flex items-center gap-1.5 transition-colors">
+            <span>🧶</span>
+            <span>Yarn Care</span>
+          </button>
+          <button class="btn-show-shipping px-3 py-2 rounded-xl bg-brand-warm/60 hover:bg-brand-warm text-brand-dark text-xs font-medium text-left flex items-center gap-1.5 transition-colors">
+            <span>📦</span>
+            <span>Shipping</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar Footer -->
+    <div class="p-4 border-t border-brand-border bg-brand-cream/40 flex items-center justify-between text-xs text-brand-muted">
+      <button id="sidebar-btn-admin" class="flex items-center gap-1.5 text-brand-muted hover:text-brand-dark transition-colors font-medium">
+        <i data-lucide="shield-check" class="w-3.5 h-3.5 text-brand-rose"></i>
+        <span>Owner Portal</span>
+      </button>
+      <span class="text-[11px]">Handmade in India 🇮🇳</span>
+    </div>
+  </aside>
 
   <!-- 7. Shopping Bag Drawer -->
   <div id="cart-drawer-overlay" class="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 hidden opacity-0 transition-opacity duration-300"></div>

@@ -639,6 +639,63 @@ function updateCartUI() {
   lucide.createIcons();
 }
 
+function openSidebar() {
+  const sidebar = document.getElementById('nav-sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+  if (!sidebar || !overlay) return;
+  overlay.classList.remove('hidden');
+  setTimeout(() => {
+    overlay.classList.remove('opacity-0');
+    sidebar.classList.remove('-translate-x-full');
+  }, 10);
+}
+
+function closeSidebar() {
+  const sidebar = document.getElementById('nav-sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+  if (!sidebar || !overlay) return;
+  sidebar.classList.add('-translate-x-full');
+  overlay.classList.add('opacity-0');
+  setTimeout(() => {
+    overlay.classList.add('hidden');
+  }, 300);
+}
+
+function setCategory(category, scrollToCatalog = false) {
+  state.activeCategory = category;
+
+  // Update horizontal category pills
+  document.querySelectorAll('.cat-pill').forEach(b => {
+    if (b.dataset.cat === category) {
+      b.classList.add('active', 'bg-brand-dark', 'text-white', 'shadow-xs');
+      b.classList.remove('bg-white', 'text-brand-muted');
+    } else {
+      b.classList.remove('active', 'bg-brand-dark', 'text-white', 'shadow-xs');
+      b.classList.add('bg-white', 'text-brand-muted');
+    }
+  });
+
+  // Update sidebar category items
+  document.querySelectorAll('.sidebar-cat-btn').forEach(b => {
+    if (b.dataset.cat === category) {
+      b.classList.add('active', 'bg-brand-dark', 'text-white', 'shadow-xs');
+      b.classList.remove('text-brand-dark', 'hover:bg-brand-warm');
+    } else {
+      b.classList.remove('active', 'bg-brand-dark', 'text-white', 'shadow-xs');
+      b.classList.add('text-brand-dark', 'hover:bg-brand-warm');
+    }
+  });
+
+  renderCatalog();
+
+  if (scrollToCatalog) {
+    const catalogEl = document.getElementById('catalog');
+    if (catalogEl) {
+      catalogEl.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+}
+
 function openCartDrawer() {
   const drawer = document.getElementById('cart-drawer');
   const overlay = document.getElementById('cart-drawer-overlay');
@@ -1430,20 +1487,46 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   document.getElementById('current-year').textContent = new Date().getFullYear();
 
-  // Category filter pills
+  // Category filter pills (Horizontal)
   document.querySelectorAll('.cat-pill').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.cat-pill').forEach(b => {
-        b.classList.remove('active', 'bg-brand-dark', 'text-white', 'shadow-xs');
-        b.classList.add('bg-white', 'text-brand-muted');
-      });
-      btn.classList.add('active', 'bg-brand-dark', 'text-white', 'shadow-xs');
-      btn.classList.remove('bg-white', 'text-brand-muted');
-
-      state.activeCategory = btn.dataset.cat;
-      renderCatalog();
+      setCategory(btn.dataset.cat, false);
     });
   });
+
+  // Sidebar Controls
+  const btnToggleSidebar = document.getElementById('btn-toggle-sidebar');
+  const btnCloseSidebar = document.getElementById('btn-close-sidebar');
+  const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+  if (btnToggleSidebar) btnToggleSidebar.addEventListener('click', openSidebar);
+  if (btnCloseSidebar) btnCloseSidebar.addEventListener('click', closeSidebar);
+  if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeSidebar);
+
+  // Sidebar Category Filter buttons
+  document.querySelectorAll('.sidebar-cat-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      setCategory(btn.dataset.cat, true);
+      closeSidebar();
+    });
+  });
+
+  // Sidebar Navigation Links
+  const sidebarHome = document.getElementById('sidebar-link-home');
+  if (sidebarHome) {
+    sidebarHome.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      closeSidebar();
+    });
+  }
+
+  const sidebarCatalog = document.getElementById('sidebar-link-catalog');
+  if (sidebarCatalog) {
+    sidebarCatalog.addEventListener('click', () => {
+      setCategory('all', true);
+      closeSidebar();
+    });
+  }
 
   // Search input
   const searchInput = document.getElementById('search-input');
@@ -1462,10 +1545,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (resetBtn) {
     resetBtn.addEventListener('click', () => {
       state.searchQuery = '';
-      state.activeCategory = 'all';
       if (searchInput) searchInput.value = '';
       if (searchInputMobile) searchInputMobile.value = '';
-      document.querySelector('[data-cat="all"]').click();
+      setCategory('all', false);
     });
   }
 
@@ -1507,8 +1589,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   const guideModal = document.getElementById('guide-modal');
   const openGuide = () => guideModal.showModal();
   document.getElementById('btn-open-guide').addEventListener('click', openGuide);
+  const sidebarGuide = document.getElementById('sidebar-link-guide');
+  if (sidebarGuide) {
+    sidebarGuide.addEventListener('click', () => {
+      closeSidebar();
+      openGuide();
+    });
+  }
   document.querySelectorAll('.btn-show-care, .btn-show-shipping, .btn-show-upi').forEach(b => {
-    b.addEventListener('click', openGuide);
+    b.addEventListener('click', () => {
+      closeSidebar();
+      openGuide();
+    });
   });
   document.getElementById('btn-close-guide-modal').addEventListener('click', () => guideModal.close());
   document.getElementById('btn-close-guide-action').addEventListener('click', () => guideModal.close());
@@ -1534,6 +1626,44 @@ Please let me know if you can make this and the estimated timeline!`;
   document.getElementById('btn-hero-custom').addEventListener('click', openCustomCommissionWhatsApp);
   document.getElementById('btn-custom-commission').addEventListener('click', openCustomCommissionWhatsApp);
   document.querySelectorAll('.btn-show-custom').forEach(b => b.addEventListener('click', openCustomCommissionWhatsApp));
+  const sidebarCustom = document.getElementById('sidebar-link-custom');
+  if (sidebarCustom) {
+    sidebarCustom.addEventListener('click', () => {
+      closeSidebar();
+      openCustomCommissionWhatsApp();
+    });
+  }
+
+  // Sidebar direct WhatsApp contact button
+  const sidebarWhatsApp = document.getElementById('sidebar-btn-whatsapp');
+  if (sidebarWhatsApp) {
+    sidebarWhatsApp.addEventListener('click', () => {
+      const phone = state.settings.whatsapp || (typeof APP_CONFIG !== 'undefined' ? APP_CONFIG.DEFAULT_WHATSAPP : '918197477497');
+      const message = 
+`🌸 *Cute Little Crochet - Storefront Inquiry* 🌸
+-----------------------------------------
+Hi! I'm visiting cutelittlecrochet.netlify.app and would like to ask a question!`;
+      const url = `https://wa.me/${phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(message)}`;
+      window.open(url, '_blank');
+    });
+  }
+
+  // Sidebar admin shortcut
+  const sidebarAdmin = document.getElementById('sidebar-btn-admin');
+  if (sidebarAdmin) {
+    sidebarAdmin.addEventListener('click', () => {
+      closeSidebar();
+      document.getElementById('admin-modal').showModal();
+    });
+  }
+
+  // Escape key closes open drawers
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeSidebar();
+      closeCartDrawer();
+    }
+  });
 
   lucide.createIcons();
 });
