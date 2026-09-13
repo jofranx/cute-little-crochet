@@ -179,9 +179,13 @@ You pack the creation and ship via India Post / Delhivery!
 - Double-click `index.html` inside `C:\Users\jofra\.gemini\antigravity\scratch\cute-little-crochet\`.
 - Bookmark it in Chrome/Edge (`Ctrl + D`) for fast access.
 
+### How to Access the Private Owner Admin Portal:
+- Navigate to your secret link: **`https://cutelittlecrochet.netlify.app/?admin=true`** (Bookmark this on your phone/laptop!).
+- *Or backup shortcut:* Tap or click 3 times rapidly on the **🌸 logo** in the header.
+- Log in with your Owner Email and Password.
+
 ### How to Add a New Creation:
-1. Open the website $\rightarrow$ click the **Shield Icon** (top right).
-2. Log in with your Owner Email and Password.
+1. Open the Admin Portal via `?admin=true`.
 3. Go to the **"Add New Creation"** tab.
 4. Click **Choose File** to pick a photo from your phone or computer.
 5. Enter title, category, price in ₹, and description.
