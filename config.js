@@ -7,9 +7,9 @@
  * 3. Paste them below (or enter them directly in your Owner Dashboard under "Shop Settings & UPI").
  */
 const APP_CONFIG = {
-  // Replace these with your Supabase credentials when ready:
-  SUPABASE_URL: '', // e.g. 'https://your-project-id.supabase.co'
-  SUPABASE_ANON_KEY: '', // e.g. 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+  // Connected Supabase credentials
+  SUPABASE_URL: 'https://tzaehznsaxridwzxajyf.supabase.co',
+  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR6YWVoem5zYXhyaWR3enhhanlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5NTEzNTgsImV4cCI6MjEwNDUyNzM1OH0.xjOQHWjTJmwo3pNiGzONqsuK04iLXg_jZCFICp9RSRg',
 
   // Default shop contact info
   DEFAULT_WHATSAPP: '918197477497',
