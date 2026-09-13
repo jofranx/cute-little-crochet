@@ -1648,14 +1648,38 @@ Hi! I'm visiting cutelittlecrochet.netlify.app and would like to ask a question!
     });
   }
 
-  // Sidebar admin shortcut
-  const sidebarAdmin = document.getElementById('sidebar-btn-admin');
-  if (sidebarAdmin) {
-    sidebarAdmin.addEventListener('click', () => {
-      closeSidebar();
-      document.getElementById('admin-modal').showModal();
-    });
+  // Secret URL Parameter trigger: ?admin=true
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('admin') === 'true') {
+    const adminModal = document.getElementById('admin-modal');
+    if (adminModal) {
+      setTimeout(() => {
+        adminModal.showModal();
+      }, 150);
+    }
   }
+
+  // Secret triple-tap on 🌸 logo in header to open admin portal
+  let logoClickCount = 0;
+  let logoClickTimer = null;
+  const brandLogos = document.querySelectorAll('header a[href="#"] > div:first-child');
+  brandLogos.forEach(logo => {
+    logo.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      logoClickCount++;
+      clearTimeout(logoClickTimer);
+      if (logoClickCount >= 3) {
+        logoClickCount = 0;
+        const adminModal = document.getElementById('admin-modal');
+        if (adminModal) adminModal.showModal();
+      } else {
+        logoClickTimer = setTimeout(() => {
+          logoClickCount = 0;
+        }, 600);
+      }
+    });
+  });
 
   // Escape key closes open drawers
   document.addEventListener('keydown', (e) => {
