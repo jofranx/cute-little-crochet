@@ -839,30 +839,36 @@ function openProductModal(productId) {
 
 // ==================== OWNER ADMIN PANEL ====================
 
+function openAdmin() {
+  const adminModal = document.getElementById('admin-modal');
+  if (!adminModal) return;
+  // If Supabase is connected, check if session is already active
+  if (isSupabaseConnected() && currentAuthUser) {
+    setAdminAuthenticated(true);
+  } else if (!isSupabaseConnected() && currentAuthUser === 'demo-unlocked') {
+    setAdminAuthenticated(true);
+  } else {
+    setAdminAuthenticated(false);
+  }
+  adminModal.showModal();
+}
+
 function setupAdminPanel() {
   const adminModal = document.getElementById('admin-modal');
-  const authScreen = document.getElementById('admin-auth-screen');
-  const authedScreen = document.getElementById('admin-authenticated-screen');
+  if (!adminModal) return;
 
-  // Open modal
-  const openAdmin = () => {
-    // If Supabase is connected, check if session is already active
-    if (isSupabaseConnected() && currentAuthUser) {
-      setAdminAuthenticated(true);
-    } else if (!isSupabaseConnected() && currentAuthUser === 'demo-unlocked') {
-      setAdminAuthenticated(true);
-    } else {
-      setAdminAuthenticated(false);
-    }
-    adminModal.showModal();
-  };
+  const btnOpenAdmin = document.getElementById('btn-open-admin');
+  if (btnOpenAdmin) btnOpenAdmin.addEventListener('click', openAdmin);
 
-  document.getElementById('btn-open-admin').addEventListener('click', openAdmin);
-  document.getElementById('btn-footer-admin').addEventListener('click', openAdmin);
+  const btnFooterAdmin = document.getElementById('btn-footer-admin');
+  if (btnFooterAdmin) btnFooterAdmin.addEventListener('click', openAdmin);
 
-  document.getElementById('btn-close-admin-modal').addEventListener('click', () => {
-    adminModal.close();
-  });
+  const btnCloseAdmin = document.getElementById('btn-close-admin-modal');
+  if (btnCloseAdmin) {
+    btnCloseAdmin.addEventListener('click', () => {
+      adminModal.close();
+    });
+  }
 
   // Sign out button in admin header
   const signoutBtn = document.getElementById('btn-admin-signout');
@@ -1651,12 +1657,9 @@ Hi! I'm visiting cutelittlecrochet.netlify.app and would like to ask a question!
   // Secret URL Parameter trigger: ?admin=true
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get('admin') === 'true') {
-    const adminModal = document.getElementById('admin-modal');
-    if (adminModal) {
-      setTimeout(() => {
-        adminModal.showModal();
-      }, 150);
-    }
+    setTimeout(() => {
+      openAdmin();
+    }, 150);
   }
 
   // Secret triple-tap on 🌸 logo in header to open admin portal
@@ -1671,8 +1674,7 @@ Hi! I'm visiting cutelittlecrochet.netlify.app and would like to ask a question!
       clearTimeout(logoClickTimer);
       if (logoClickCount >= 3) {
         logoClickCount = 0;
-        const adminModal = document.getElementById('admin-modal');
-        if (adminModal) adminModal.showModal();
+        openAdmin();
       } else {
         logoClickTimer = setTimeout(() => {
           logoClickCount = 0;
